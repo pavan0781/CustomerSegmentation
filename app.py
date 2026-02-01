@@ -3,7 +3,7 @@ import numpy as np
 import joblib
 
 # Load model and scaler
-model = joblib.load('customer_segmentation_model.pkl') 
+model = joblib.load('customer_segmentation_model.pkl')
 scaler = joblib.load('scaler.pkl')
 
 st.set_page_config(page_title="Customer Segmentation", page_icon="🛍")
@@ -16,7 +16,7 @@ with st.sidebar:
     st.header("About")
     st.info("This app uses a K-Means model to group customers into segments based on behavior.")
 
-# User inputs
+# User Inputs
 col1, col2 = st.columns(2)
 
 with col1:
@@ -27,22 +27,29 @@ with col2:
 
 if st.button('Predict Segment', use_container_width=True):
 
-    # Fill missing features using dataset averages
-    input_features = scaler.mean_.copy().reshape(1, -1)
+    # Number of features scaler expects
+    num_features = scaler.mean_.shape[0]
 
-    # Map inputs to correct feature positions
+    # Use dataset average values as base instead of zeros
+    input_features = scaler.mean_.reshape(1, -1)
+
+    # Map user inputs to correct feature positions
+    # Based on your training feature order:
+    # Income → index 3
+    # Total_Spend → index 28
     input_features[0, 3] = income
     input_features[0, 28] = spending
 
-    # Scale
+    # Scale features
     features_scaled = scaler.transform(input_features)
 
-    # Predict
+    # Predict cluster
     cluster = model.predict(features_scaled)[0]
 
     st.divider()
     st.subheader(f"Result: Segment {cluster}")
 
+    # Segment interpretation
     if cluster == 0:
         st.write("**Strategy:** High value, frequent shoppers. Focus on loyalty rewards.")
     elif cluster == 1:
