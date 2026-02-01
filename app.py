@@ -1,11 +1,10 @@
 import streamlit as st
 import numpy as np
-import joblib
+import joblib  # <--- Ensure this line is exactly like this
 
 # Load model and scaler
-# Ensure these files are in the same folder as app.py on GitHub
-model = joblib.load('customer_segmentation_model.pkl') [cite: 9]
-scaler = joblib.load('scaler.pkl') [cite: 3]
+model = joblib.load('customer_segmentation_model.pkl') 
+scaler = joblib.load('scaler.pkl')
 
 st.set_page_config(page_title="Customer Segmentation", page_icon="🛍")
 
