@@ -35,10 +35,10 @@ with col2:
 
 if st.button('Predict Segment', use_container_width=True):
 
-    # Use dataset averages as base
+    # Base with average values
     input_features = scaler.mean_.reshape(1, -1)
 
-    # Map user inputs
+    # Map user inputs to feature indices
     input_features[0, 3] = income
     input_features[0, 28] = spending
 
@@ -53,39 +53,37 @@ if st.button('Predict Segment', use_container_width=True):
     st.markdown("## 📊 Business Insights")
 
     if cluster == 0:
-        st.success("""
-        **High Value Customers**
-        - High spending and strong purchase behavior
-        - Ideal for loyalty programs and premium offers
-        """)
+        st.success("High value customers. Target loyalty and premium offers.")
     elif cluster == 1:
-        st.warning("""
-        **Price Sensitive Customers**
-        - Lower spending behavior
-        - Respond well to discounts and promotions
-        """)
+        st.warning("Price sensitive customers. Use discounts and promotions.")
     elif cluster == 2:
-        st.info("""
-        **Occasional Customers**
-        - Moderate activity
-        - Need engagement campaigns
-        """)
+        st.info("Occasional buyers. Engage with campaigns.")
     else:
-        st.error("""
-        **Low Engagement Customers**
-        - Rare purchases
-        - Require reactivation strategies
-        """)
+        st.error("Low engagement customers. Use reactivation strategies.")
 
-    # Customer Position Chart
-    st.markdown("## 📈 Customer Position")
+    # ---------------- SEGMENTATION GRAPH ----------------
+    st.markdown("## 📍 Customer Segmentation Graph")
+
+    # Cluster centers in original scale
+    centers = scaler.inverse_transform(model.cluster_centers_)
 
     fig, ax = plt.subplots()
-    ax.scatter(input_features[0, 3], input_features[0, 28], color='red', s=200)
+
+    # Plot centers
+    ax.scatter(centers[:, 3], centers[:, 28],
+               c='blue', s=250, marker='X', label='Cluster Centers')
+
+    # Plot current customer
+    ax.scatter(income, spending,
+               c='red', s=200, label='This Customer')
+
     ax.set_xlabel("Income")
     ax.set_ylabel("Spending")
-    ax.set_title("Customer Segmentation Map")
+    ax.set_title("Customer Segmentation Visualization")
+    ax.legend()
+
     st.pyplot(fig)
+    # -----------------------------------------------------
 
     # Segment Comparison Chart
     st.markdown("## 📊 Segment Comparison")
